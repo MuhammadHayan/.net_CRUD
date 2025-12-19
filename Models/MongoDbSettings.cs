@@ -1,5 +1,6 @@
 namespace MongoCrudApi.Models;
 
+// Maps MongoDbSettings section from appsettings.json
 public class MongoDbSettings
 {
     public string ConnectionString { get; set; } = null!;

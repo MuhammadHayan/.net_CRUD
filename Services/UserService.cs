@@ -4,6 +4,7 @@ using MongoCrudApi.Models;
 
 namespace MongoCrudApi.Services;
 
+// This class handles ONLY database operations
 public class UserService
 {
     private readonly IMongoCollection<User> _usersCollection;

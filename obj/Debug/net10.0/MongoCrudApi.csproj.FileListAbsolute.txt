@@ -41,3 +41,4 @@ C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\MongoDB.Driver.dll
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\SharpCompress.dll
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\Snappier.dll
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\ZstdSharp.dll
+C:\Users\ALMEEZAN\MongoCrudApi\obj\Debug\net10.0\MongoCrudApi.sourcelink.json

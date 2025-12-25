@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using MongoCrudApi.Dtos;
 using MongoCrudApi.Models;
 using MongoCrudApi.Services;
+using MongoCrudApi.Responses;
 
 namespace MongoCrudApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize] // 🔒 Requires JWT token
+[Authorize] // 🔒 Requires valid JWT token
 public class UsersController : ControllerBase
 {
     private readonly UserService _userService;
@@ -20,43 +21,57 @@ public class UsersController : ControllerBase
 
     // GET: api/users
     [HttpGet]
-    public async Task<ActionResult<List<UserResponseDto>>> Get()
+    public async Task<IActionResult> Get()
     {
         var users = await _userService.GetAsync();
 
-        // Map Mongo model -> Response DTO
-        var response = users.Select(u => new UserResponseDto(
+        // Mongo model → DTO
+        var responseData = users.Select(u => new UserResponseDto(
             u.Id!,
             u.Name,
             u.Email
         )).ToList();
 
-        return Ok(response);
+        return Ok(new ApiResponse<List<UserResponseDto>>
+        {
+            Success = true,
+            Data = responseData
+        });
     }
 
     // GET: api/users/{id}
     [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<UserResponseDto>> Get(string id)
+    public async Task<IActionResult> Get(string id)
     {
         var user = await _userService.GetByIdAsync(id);
 
         if (user is null)
-            return NotFound();
+        {
+            return NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "User not found"
+            });
+        }
 
-        var response = new UserResponseDto(
+        var responseData = new UserResponseDto(
             user.Id!,
             user.Name,
             user.Email
         );
 
-        return Ok(response);
+        return Ok(new ApiResponse<UserResponseDto>
+        {
+            Success = true,
+            Data = responseData
+        });
     }
 
     // POST: api/users
     [HttpPost]
     public async Task<IActionResult> Post(CreateUserDto dto)
     {
-        // DTO -> Mongo model
+        // DTO → Mongo model
         var user = new User
         {
             Name = dto.Name,
@@ -65,14 +80,18 @@ public class UsersController : ControllerBase
 
         await _userService.CreateAsync(user);
 
-        // Mongo model -> Response DTO
-        var response = new UserResponseDto(
+        var responseData = new UserResponseDto(
             user.Id!,
             user.Name,
             user.Email
         );
 
-        return CreatedAtAction(nameof(Get), new { id = user.Id }, response);
+        return CreatedAtAction(nameof(Get), new { id = user.Id },
+            new ApiResponse<UserResponseDto>
+            {
+                Success = true,
+                Data = responseData
+            });
     }
 
     // PUT: api/users/{id}
@@ -82,15 +101,25 @@ public class UsersController : ControllerBase
         var user = await _userService.GetByIdAsync(id);
 
         if (user is null)
-            return NotFound();
+        {
+            return NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "User not found"
+            });
+        }
 
-        // Update allowed fields only
+        // Only allowed fields updated
         user.Name = dto.Name;
         user.Email = dto.Email;
 
         await _userService.UpdateAsync(id, user);
 
-        return NoContent();
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "User updated successfully"
+        });
     }
 
     // DELETE: api/users/{id}
@@ -100,10 +129,20 @@ public class UsersController : ControllerBase
         var user = await _userService.GetByIdAsync(id);
 
         if (user is null)
-            return NotFound();
+        {
+            return NotFound(new ApiResponse
+            {
+                Success = false,
+                Message = "User not found"
+            });
+        }
 
         await _userService.RemoveAsync(id);
 
-        return NoContent();
+        return Ok(new ApiResponse
+        {
+            Success = true,
+            Message = "User deleted successfully"
+        });
     }
 }

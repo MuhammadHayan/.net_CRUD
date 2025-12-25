@@ -1,5 +1,4 @@
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\appsettings.Development.json
-C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\appsettings.json
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\MongoCrudApi.staticwebassets.endpoints.json
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\MongoCrudApi.exe
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\MongoCrudApi.deps.json
@@ -51,3 +50,4 @@ C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\Microsoft.IdentityModel.Protoco
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\ALMEEZAN\MongoCrudApi\bin\Debug\net10.0\appsettings.json

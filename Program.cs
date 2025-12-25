@@ -1,28 +1,28 @@
 using Scalar.AspNetCore;
 using MongoCrudApi.Models;
 using MongoCrudApi.Services;
+using MongoCrudApi.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Listen on this port
+// 🌍 Listen on this port
 builder.WebHost.UseUrls("http://*:5160");
 
-// Enable controllers
+// Enable Controllers
 builder.Services.AddControllers();
 
-// Register services
+// Register Services
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<JwtService>(); // 🔐 JWT generator
 
-// Mongo settings
+// MongoDB settings
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
-// 🔐 JWT Authentication setup
+// 🔐 JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -44,11 +44,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Swagger
 builder.Services.AddOpenApi();
 
-// CORS
+// CORS (⚠️ lock down in production)
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
 var app = builder.Build();
@@ -59,12 +61,18 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+// 🧱 Middleware order is CRITICAL
+
 app.UseCors();
 
-// 🔐 VERY IMPORTANT (order matters)
+// 🔐 Auth must come BEFORE controllers
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 🌍 Global error handler (catches all crashes)
+app.UseMiddleware<ExceptionMiddleware>();
+
+// 🎯 Map Controllers LAST
 app.MapControllers();
 
 app.Run();

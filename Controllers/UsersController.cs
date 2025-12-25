@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoCrudApi.Dtos;
 using MongoCrudApi.Models;
@@ -7,6 +8,7 @@ namespace MongoCrudApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize] // 🔒 Requires JWT token
 public class UsersController : ControllerBase
 {
     private readonly UserService _userService;

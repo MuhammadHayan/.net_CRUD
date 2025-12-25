@@ -16,16 +16,22 @@ public class UserService
         _usersCollection = mongoDatabase.GetCollection<User>(mongoSettings.Value.CollectionName);
     }
 
-    // CRUD Methods
-    public async Task<List<User>> GetAsync() => await _usersCollection.Find(_ => true).ToListAsync();
-    
-    public async Task<User?> GetByIdAsync(string id) => 
+    public async Task<List<User>> GetAsync() =>
+        await _usersCollection.Find(_ => true).ToListAsync();
+
+    public async Task<User?> GetByIdAsync(string id) =>
         await _usersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(User newUser) => await _usersCollection.InsertOneAsync(newUser);
+    // 🔍 NEW: Find user by email (used in login)
+    public async Task<User?> GetByEmailAsync(string email) =>
+        await _usersCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(string id, User updatedUser) => 
+    public async Task CreateAsync(User newUser) =>
+        await _usersCollection.InsertOneAsync(newUser);
+
+    public async Task UpdateAsync(string id, User updatedUser) =>
         await _usersCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
 
-    public async Task RemoveAsync(string id) => await _usersCollection.DeleteOneAsync(x => x.Id == id);
+    public async Task RemoveAsync(string id) =>
+        await _usersCollection.DeleteOneAsync(x => x.Id == id);
 }

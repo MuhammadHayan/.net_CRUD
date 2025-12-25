@@ -1,31 +1,54 @@
-
 using Scalar.AspNetCore;
 using MongoCrudApi.Models;
 using MongoCrudApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Tell .NET to listen on this port
+// Listen on this port
 builder.WebHost.UseUrls("http://*:5160");
 
 // Enable controllers
 builder.Services.AddControllers();
 
-// Register Mongo service
+// Register services
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<JwtService>(); // 🔐 JWT generator
 
-// Bind MongoDbSettings from appsettings.json
+// Mongo settings
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
-// Add Swagger/OpenAPI (Optional but recommended)
+// 🔐 JWT Authentication setup
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+            )
+        };
+    });
+
+// Swagger
 builder.Services.AddOpenApi();
 
-// CORS (⚠️ restrict in production)
-builder.Services.AddCors(options => {
-    options.AddDefaultPolicy(
-        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
-        );
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 var app = builder.Build();
@@ -33,13 +56,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference(); 
+    app.MapScalarApiReference();
 }
 
-// Must be before MapControllers
 app.UseCors();
 
-// Maps the routes in Controllers folder
-app.MapControllers(); 
+// 🔐 VERY IMPORTANT (order matters)
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MongoCrudApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f00cf766a3f45ea4e4f3e6e4c7a5d406bb7df323")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b3fe61bb3fcfa9cecd585be81be96e1ab4d98aeb")]
 [assembly: System.Reflection.AssemblyProductAttribute("MongoCrudApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MongoCrudApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

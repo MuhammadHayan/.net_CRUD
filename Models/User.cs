@@ -11,8 +11,10 @@ public class User
     [BsonRepresentation(BsonType.ObjectId)] // Allows us to use 'string' instead of 'ObjectId'
     public string? Id { get; set; }
 
-    [BsonElement("Name")] // Maps the C# property to a Mongo field name
     public string Name { get; set; } = null!;
 
     public string Email { get; set; } = null!;
+
+    // 🔐 Stores HASHED password (never plain text)
+    public string PasswordHash { get; set; } = null!;
 }
